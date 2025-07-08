@@ -4,8 +4,8 @@ from config import SUPPORT_CHAT, OWNER_ID
 from StringGen import Anony
 
 
-async def get_start_keyboard():
-    keyboard = InlineKeyboardMarkup([
+async def get_start_keyboard(is_owner=False):
+    buttons = [
         [
             InlineKeyboardButton(
                 text="⌯ ᴀᴅᴅ ᴍє ᴛσ ʏσᴜʀ ɢʀσᴜᴘ ⌯",
@@ -23,7 +23,14 @@ async def get_start_keyboard():
         [
             InlineKeyboardButton(text="⌜ᴄσᴍᴍᴀηᴅꜱ ⌟", callback_data="commands")
         ]
-    ])
+    ]
+    
+    if is_owner:
+        buttons.append([
+            InlineKeyboardButton(text="⌯ σᴡηєʀ ᴄσᴍᴍᴀηᴅꜱ ⌯", callback_data="owner_commands")
+        ])
+    
+    keyboard = InlineKeyboardMarkup(buttons)
     return keyboard
 
 
@@ -50,6 +57,18 @@ async def get_features_keyboard():
     ])
     return keyboard
 
+async def get_command_keyboard():
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(text="❣ ʟσɢɪη", callback_data="login")
+        ],
+        [
+            InlineKeyboardButton(text="⌯ ʙᴀᴄᴋ", callback_data="back_to_start"),
+            InlineKeyboardButton(text="❣ ᴄʟσꜱє", callback_data="close_message")
+        ]
+    ])
+    return keyboard
+
 async def get_owner_command_keyboard():
     keyboard = InlineKeyboardMarkup([
         [
@@ -66,18 +85,6 @@ async def get_owner_command_keyboard():
         ],
         [
             InlineKeyboardButton(text="➻ ᴜᴘᴅᴀᴛє", callback_data="update"),
-            InlineKeyboardButton(text="❣ ʟσɢɪη", callback_data="login")
-        ],
-        [
-            InlineKeyboardButton(text="⌯ ʙᴀᴄᴋ", callback_data="back_to_start"),
-            InlineKeyboardButton(text="❣ ᴄʟσꜱє", callback_data="close_message")
-        ]
-    ])
-    return keyboard
-
-async def get_user_command_keyboard():
-    keyboard = InlineKeyboardMarkup([
-        [
             InlineKeyboardButton(text="❣ ʟσɢɪη", callback_data="login")
         ],
         [

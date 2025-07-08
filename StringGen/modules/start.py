@@ -14,6 +14,7 @@ async def f_start(_, message: Message):
     user_mention = f"[{user.first_name}](tg://user?id={user.id})"
     username = user.username or user.first_name
     bot_mention = f"[{Anony.me.first_name}](tg://user?id={Anony.me.id})"
+    is_owner = user.id == OWNER_ID
     
     # Send log to the logger group
     try:
@@ -47,9 +48,8 @@ async def f_start(_, message: Message):
 
 •────────────────────────────•  
 ❣ 𝐏σᴡєʀєᴅ ʙʏ :- [ᴅєᴠɪʟ ʙσʏ](tg://user?id={OWNER_ID}) ❣  
-•────────────────────────────•
-""",
-        reply_markup=await get_start_keyboard(),
+•────────────────────────────•""",
+        reply_markup=await get_start_keyboard(is_owner),
         parse_mode=ParseMode.MARKDOWN
     )
     await add_served_user(message.from_user.id)

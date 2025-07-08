@@ -7,6 +7,7 @@ from StringGen.utils import (
     gen_key,
     get_start_keyboard,
     get_features_keyboard,
+    get_command_keyboard,
     get_owner_command_keyboard,
     get_user_command_keyboard,
     is_owner
@@ -40,31 +41,13 @@ async def cb_choose(_, cq: CallbackQuery):
 
 @Anony.on_callback_query(filters.regex(pattern=r"^commands$"))
 async def commands_callback(_, callback_query: CallbackQuery):
-    user_id = callback_query.from_user.id
-    
-    if is_owner(user_id):
-        await callback_query.edit_message_text(
-            """┌────── ˹ σᴡηєʀ ᴄσᴍᴍᴀηᴅꜱ ˼ ──────⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⟡
-┆◦ ғσʀᴄє ꜱᴜʙ: ᴍᴀηᴀɢє ғσʀᴄє ꜱᴜʙꜱᴄʀɪᴘᴛɪση
-┆◦ ʙʀσᴀᴅᴄᴀꜱᴛ: ꜱєηᴅ ᴍєꜱꜱᴀɢє ᴛσ ᴀʟʟ ᴜꜱєʀꜱ
-┆◦ ᴘʟᴀηꜱ: ᴍᴀηᴀɢє ꜱᴜʙꜱᴄʀɪᴘᴛɪση ᴘʟᴀηꜱ
-┆◦ ᴜꜱєʀꜱ: ᴠɪєᴡ ʙσᴛ ᴜꜱєʀꜱ
-┆◦ ᴠᴀʀꜱ: ᴍᴀηᴀɢє ʙσᴛ ᴠᴀʀɪᴀʙʟєꜱ
-┆◦ ʟσɢꜱ: ᴠɪєᴡ ʙσᴛ ʟσɢꜱ
-┆◦ ᴜᴘᴅᴀᴛє: ᴜᴘᴅᴀᴛє ʙσᴛ
-┆◦ ʟσɢɪη: ɢєηєʀᴀᴛє ꜱєꜱꜱɪση
-└─────────────────────────────•""",
-            reply_markup=await get_owner_command_keyboard(),
-            parse_mode=ParseMode.MARKDOWN
-        )
-    else:
-        await callback_query.edit_message_text(
-            """┌────── ˹ ᴄσᴍᴍᴀηᴅꜱ ˼ ──────⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⟡
+    await callback_query.edit_message_text(
+        """┌────── ˹ ᴄσᴍᴍᴀηᴅꜱ ˼ ──────⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⟡
 ┆◦ ʟσɢɪη: ɢєηєʀᴀᴛє ꜱєꜱꜱɪση ꜱᴛʀɪηɢ
 └─────────────────────────────•""",
-            reply_markup=await get_user_command_keyboard(),
-            parse_mode=ParseMode.MARKDOWN
-        )
+        reply_markup=await get_command_keyboard(),
+        parse_mode=ParseMode.MARKDOWN
+    )
 
 
 @Anony.on_callback_query(filters.regex(pattern=r"^about$"))
@@ -107,6 +90,7 @@ async def features_callback(_, callback_query: CallbackQuery):
 async def back_to_start_callback(_, callback_query: CallbackQuery):
     user = callback_query.from_user
     bot_mention = f"[{Anony.me.first_name}](tg://user?id={Anony.me.id})"
+    is_owner = user.id == OWNER_ID
     
     await callback_query.edit_message_text(
         f"""┌────── ˹ ᴡєʟᴄσᴍє ˼ ──────⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⟡  
@@ -120,9 +104,9 @@ async def back_to_start_callback(_, callback_query: CallbackQuery):
 ➻ ꜱᴜʙꜱᴄʀɪᴘᴛɪση ᴄʜєᴄᴋ + ᴜꜱєʀ ᴅᴀꜱʜʙσᴀʀᴅ ᴀᴄᴛɪᴠє ⌯  
 
 •────────────────────────────•  
-❣ 𝐏σᴡєʀєᴅ ʙʏ :- [ᴅєᴠɪʟ ʙσʏ](tg://user?id=7530212474) ❣  
+❣ 𝐏σᴡєʀєᴅ ʙʏ :- [ᴅєᴠɪʟ ʙσʏ](tg://user?id={OWNER_ID}) ❣  
 •────────────────────────────•""",
-        reply_markup=await get_start_keyboard(),
+        reply_markup=await get_start_keyboard(is_owner),
         parse_mode=ParseMode.MARKDOWN
     )
 
@@ -132,5 +116,29 @@ async def close_message_callback(_, callback_query: CallbackQuery):
     user_mention = f"[{callback_query.from_user.first_name}](tg://user?id={callback_query.from_user.id})"
     await callback_query.message.edit_text(
         f"ᴄʟσꜱєᴅ ʙʏ: {user_mention}",
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+
+@Antml.on_callback_query(filters.regex(pattern=r"^owner_commands$"))
+async def owner_commands_callback(_, callback_query: CallbackQuery):
+    user_id = callback_query.from_user.id
+    
+    if not is_owner(user_id):
+        await callback_query.answer("⌯ ʏσᴜ ᴀʀє ησᴛ ᴛʜє σᴡηєʀ σғ ᴛʜɪꜱ ʙσᴛ ⌯", show_alert=True)
+        return
+        
+    await callback_query.edit_message_text(
+        """┌────── ˹ σᴡηєʀ ᴄσᴍᴍᴀηᴅꜱ ˼ ──────⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⟡
+┆◦ ғσʀᴄє ꜱᴜʙ: ᴍᴀηᴀɢє ғσʀᴄє ꜱᴜʙꜱᴄʀɪᴘᴛɪση
+┆◦ ʙʀσᴀᴅᴄᴀꜱᴛ: ꜱєηᴅ ᴍєꜱꜱᴀɢє ᴛσ ᴀʟʟ ᴜꜱєʀꜱ
+┆◦ ᴘʟᴀηꜱ: ᴍᴀηᴀɢє ꜱᴜʙꜱᴄʀɪᴘᴛɪση ᴘʟᴀηꜱ
+┆◦ ᴜꜱєʀꜱ: ᴠɪєᴡ ʙσᴛ ᴜꜱєʀꜱ
+┆◦ ᴠᴀʀꜱ: ᴍᴀηᴀɢє ʙσᴛ ᴠᴀʀɪᴀʙʟєꜱ
+┆◦ ʟσɢꜱ: ᴠɪєᴡ ʙσᴛ ʟσɢꜱ
+┆◦ ᴜᴘᴅᴀᴛє: ᴜᴘᴅᴀᴛє ʙσᴛ
+┆◦ ʟσɢɪη: ɢєηєʀᴀᴛє ꜱєꜱꜱɪση
+└─────────────────────────────•""",
+        reply_markup=await get_owner_command_keyboard(),
         parse_mode=ParseMode.MARKDOWN
     )
